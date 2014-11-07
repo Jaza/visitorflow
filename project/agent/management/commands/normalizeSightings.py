@@ -25,7 +25,7 @@ class Command(BaseCommand):
             more = Sighting.objects.filter(normalize_processed=False, host=first.host, device_id=first.device_id, timestamp=first.timestamp)
             for sighting in more:
                 group.append(sighting)
-            
+
             # find more of this match in sequential seconds
             more = Sighting.objects.filter(normalize_processed=False, host=first.host, device_id=first.device_id, timestamp=group[-1].timestamp + 1)
             while more.count() > 0:
@@ -43,7 +43,7 @@ class Command(BaseCommand):
                     norm.signal_high = sighting.signal_dbm
                 avg.append(sighting.signal_dbm)
             norm.signal_avg = sum(avg) / len(avg)
-            norm.num_samples = len(group) 
+            norm.num_samples = len(group)
             norm.save()
 
             # record these sightings as normalized

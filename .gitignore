@@ -1,4 +1,8 @@
 *.pyc
-scripts/tshark.log
+log
+project/settings/local_settings.py
+wsgi/local_wsgi.py
 env
+build
+dev.db
 

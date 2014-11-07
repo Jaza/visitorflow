@@ -13,14 +13,17 @@ middleware here, or combine a Django application with an application of another
 framework.
 
 """
+
+# Copy and rename this file to 'local_wsgi.py', and change any relevant settings.
+
 import os
 import sys
 
-path = '/var/www/vflow'
+path = '/path/to/visitorflow'
 if path not in sys.path:
     sys.path.append(path)
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "visitorflow.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
@@ -31,3 +34,4 @@ application = get_wsgi_application()
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
+
