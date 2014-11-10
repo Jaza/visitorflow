@@ -10,11 +10,11 @@ This repo forked from the original: https://github.com/IMAmuseum/visitorflow
 Usage
 -----
 
-1.  Make sure you have installed:
+1.  Make sure you have installed (on the endpoint server):
 
     - MySQL (including dev libraries, and MySQLdb for Python)
 
-2.  Clone the visitorflow repo:
+2.  Clone the visitorflow repo to the endpoint server:
     -
         git clone https://github.com/Jaza/visitorflow.git
         cd visitorflow
@@ -38,3 +38,10 @@ Usage
     -
         ./project/manage.py migrate
 10. Copy the wsgi/example_wsgi.py to wsgi/local_wsgi.py, and edit local_wsgi.py per your setup.
+11. Set up your webserver to serve the site via the local_wsgi.py file (e.g. create an Apache VirtualHost that calls it from a subdomain).
+12. Set the 'normalizeSightings' script to run regularly (e.g. every 5 minutes) via a cron job:
+    -
+        /path/to/python /path/to/project/manage.py normalizeSightings
+13. Copy the scripts/listen.py and scripts/listen_if_notrunning.sh files to the client device (e.g. Raspberry Pi), and set something like this to run regularly (e.g. every 5 minutes) via a cron job:
+    -
+        /path/to/listen_if_notrunning.sh "/path/to/listen.py http://endpoint.server.url/agent/report/ "$(echo -n "$(cat /sys/class/net/wlan0/address)" | openssl sha1 -hmac "key" | sed 's/^.* //')" wlan0 /path/to/tshark.log"

@@ -72,7 +72,7 @@ def report(sightings, server_endpoint, host_identifier):
         data = {
             'host': host_identifier,
             'timestamp': sighting[0],
-            'device_id': hashlib.md5(sighting[1]).hexdigest(),
+            'device_id': hashlib.sha1(sighting[1]).hexdigest(),
             'signal_dbm': sighting[2]
         }
         del sightings[index]
@@ -86,8 +86,11 @@ def report(sightings, server_endpoint, host_identifier):
 
 
 def clean_up(proc, log):
-    proc.terminate()
-    proc.poll()
+    try:
+        proc.terminate()
+        proc.poll()
+    except:
+        pass
     log.close()
 
 
