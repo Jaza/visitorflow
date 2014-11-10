@@ -10,9 +10,7 @@ This repo forked from the original: https://github.com/IMAmuseum/visitorflow
 Usage
 -----
 
-1.  Make sure you have installed (on the endpoint server):
-
-    - MySQL (including dev libraries, and MySQLdb for Python)
+1.  Make sure you have MySQL including dev libraries, and MySQLdb for Python) installed on the endpoint server):
 2.  Clone the visitorflow repo to the endpoint server:
     -
         git clone https://github.com/Jaza/visitorflow.git
