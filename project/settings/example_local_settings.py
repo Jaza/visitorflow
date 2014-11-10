@@ -35,3 +35,4 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # Make this unique, and don't share it with anybody.
 #SECRET_KEY = ''
 
+#ALLOWED_HOSTS = ['127.0.0.1',]
