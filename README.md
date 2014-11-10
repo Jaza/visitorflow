@@ -11,9 +11,7 @@ Usage
 -----
 
 1.  Make sure you have installed (on the endpoint server):
-
     - MySQL (including dev libraries, and MySQLdb for Python)
-
 2.  Clone the visitorflow repo to the endpoint server:
     -
         git clone https://github.com/Jaza/visitorflow.git
