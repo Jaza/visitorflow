@@ -12,9 +12,12 @@ Usage
 
 1.  Make sure you have MySQL including dev libraries, and MySQLdb for Python) installed on the endpoint server).
 2.  Clone the visitorflow repo to the endpoint server:
-    -
-        git clone https://github.com/Jaza/visitorflow.git
-        cd visitorflow
+
+    ```
+    git clone https://github.com/Jaza/visitorflow.git
+    cd visitorflow
+    ```
+
 3.  Set up a (Python 2.7) virtualenv (recommended to use with '--system-site-packages option') and activate it, e.g:
     -
         virtualenv --system-site-packages .
