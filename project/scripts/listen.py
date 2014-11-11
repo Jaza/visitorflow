@@ -7,12 +7,10 @@ import subprocess
 import time
 import re
 import hashlib
-import socket
-import urllib
-import urllib2
+import requests
 
 
-def main_loop(server_endpoint, host_identifier, wlan_interface, log_file):
+def main_loop(server_endpoint, host_identifier, wlan_interface, log_file, endpoint_auth):
     # Remove the log file if present
     try:
         os.unlink(log_file)
@@ -41,7 +39,7 @@ def main_loop(server_endpoint, host_identifier, wlan_interface, log_file):
         # start process loop
         while (True):
             # report any sightings
-            report(sightings, server_endpoint, host_identifier)
+            report(sightings, server_endpoint, host_identifier, endpoint_auth)
             # read in one line of log
             line = log.readline()
             # empty string is sent back if no input available
@@ -65,7 +63,7 @@ def main_loop(server_endpoint, host_identifier, wlan_interface, log_file):
     clean_up(proc, log)
 
 
-def report(sightings, server_endpoint, host_identifier):
+def report(sightings, server_endpoint, host_identifier, endpoint_auth):
     # if there are any sightings queued for reporting, send to server
     for index in range(len(sightings)):
         sighting = sightings[index]
@@ -78,10 +76,9 @@ def report(sightings, server_endpoint, host_identifier):
         del sightings[index]
         # don't crash if the request fails
         try:
-            req = urllib2.urlopen(server_endpoint, urllib.urlencode(data))
-            req.close()
+            req = requests.post(server_endpoint, data=data, headers={'Connection':'close'}, auth=endpoint_auth, verify=False)
         except:
-            print('Request to server endpoint %s with data %s failed' % (server_endpoint, data), file=sys.stderr)
+            print('Request to server endpoint %s with data %s%s failed' % (server_endpoint, data, endpoint_auth and (' and auth %s' % endpoint_auth) or ''), file=sys.stderr)
             pass
 
 
@@ -96,7 +93,7 @@ def clean_up(proc, log):
 
 if __name__ == '__main__':
     if len(sys.argv) < 5:
-        print('Four arguments are required for this script: server_endpoint, host_identifier, wlan_interface, and log_file; e.g. ./listen.py http://192.168.1.1/agent/report/ "$(cat /sys/class/net/wlan0/address)" wlan0 /tmp/tshark.log', file=sys.stderr)
+        print('Four arguments are required for this script: server_endpoint, host_identifier, wlan_interface, and log_file; e.g. ./listen.py http://192.168.1.1/agent/report/ "$(echo -n "$(cat /sys/class/net/wlan0/address)" | openssl sha1 -hmac "key" | sed \'s/^.* //\')" wlan0 /tmp/tshark.log', file=sys.stderr)
         sys.exit(1)
 
     # start main loop
@@ -105,4 +102,5 @@ if __name__ == '__main__':
             server_endpoint=sys.argv[1],
             host_identifier=sys.argv[2],
             wlan_interface=sys.argv[3],
-            log_file=sys.argv[4])
+            log_file=sys.argv[4],
+            endpoint_auth=(len(sys.argv) > 5 and tuple(sys.argv[5].split(':')) or None))
