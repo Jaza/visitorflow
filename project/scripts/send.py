@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import json
 import sys
 import os
 import subprocess
@@ -31,7 +32,7 @@ def main_loop(server_endpoint, host_identifier, wlan_interface, log_db, max_line
                         conn.close()
                         is_query_successful = True
                         print('Retrieved %d results from sqlite' % len(results))
-                    except sqlite.OperationalError:
+                    except sqlite3.OperationalError:
                         # wait a second so we aren't hammering the log file
                         time.sleep(1)
 
@@ -56,7 +57,7 @@ def main_loop(server_endpoint, host_identifier, wlan_interface, log_db, max_line
                             conn.close()
                             is_query_successful = True
                             print('Deleted %d ids from sqlite' % len(ids))
-                        except sqlite.OperationalError:
+                        except sqlite3.OperationalError:
                             # wait a second so we aren't hammering the log file
                             time.sleep(1)
 
@@ -86,7 +87,7 @@ def report(sightings, server_endpoint, host_identifier, endpoint_auth):
         is_req_successful = False
         while (not is_req_successful):
             try:
-                req = requests.post(server_endpoint, data={'sightings': data}, headers={'Connection':'close', 'content-type': 'application/json'}, auth=endpoint_auth, verify=False)
+                req = requests.post(server_endpoint, data=json.dumps({'sightings': data}), headers={'Connection':'close', 'content-type': 'application/json'}, auth=endpoint_auth, verify=False)
                 if req and req.status_code == 200:
                     print('Request with data %s successful' % data)
                     is_req_successful = True
