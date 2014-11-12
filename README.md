@@ -10,7 +10,7 @@ This repo forked from the original: https://github.com/IMAmuseum/visitorflow
 Usage
 -----
 
-1.  Make sure you have MySQL including dev libraries, and MySQLdb for Python) installed on the endpoint server).
+1.  Make sure you have MySQL (including dev libraries, and MySQLdb for Python) installed on the endpoint server, and make sure you have sqlite3 (including the Python library) installed on the client device (e.g. Raspberry Pi).
 2.  Clone the visitorflow repo to the endpoint server:
 
     ```
@@ -18,7 +18,7 @@ Usage
     cd visitorflow
     ```
 
-3.  Set up a (Python 2.7) virtualenv (recommended to use with '--system-site-packages option') and activate it, e.g:
+3.  (Optional but recommended). Set up a (Python 2.7) virtualenv (recommended to use with '--system-site-packages option') and activate it, e.g:
 
     ```
     virtualenv --system-site-packages .
@@ -60,8 +60,14 @@ Usage
     /path/to/python /path/to/project/manage.py normalizeSightings
     ```
 
-13. Copy the scripts/listen.py and scripts/listen_if_notrunning.sh files to the client device (e.g. Raspberry Pi), and set something like this to run regularly (e.g. every 5 minutes) via a cron job:
+13. Copy the scripts/listen.sh and scripts/listen_if_notrunning.sh files to the client device (e.g. Raspberry Pi), and set something like this to run regularly (e.g. every 5 minutes) via a cron job:
 
     ```
-    /path/to/listen_if_notrunning.sh "/path/to/listen.py http://endpoint.server.url/agent/report/ "$(echo -n "$(cat /sys/class/net/wlan0/address)" | openssl sha1 -hmac "key" | sed 's/^.* //')" wlan0 /path/to/tshark.log"
+    /path/to/listen_if_notrunning.sh "/path/to/listen.sh wlan0 /path/to/tshark.db"
+    ```
+
+14. Copy the scripts/send.py and scripts/send_if_notrunning.sh files to the client device (e.g. Raspberry Pi), and set something like this to run regularly (e.g. every 5 minutes) via a cron job:
+
+    ```
+    /path/to/send_if_notrunning.sh "/path/to/send.py http://endpoint.server.url/agent/report/ "$(echo -n "$(cat /sys/class/net/wlan0/address)" | openssl sha1 -hmac "key" | sed 's/^.* //')" wlan0 /path/to/tshark.db 1000 endpoint_username:endpoint_password"
     ```
