@@ -7,7 +7,7 @@ from agent.models import Sighting
 
 @csrf_exempt
 def report(request):
-    if request.method == 'POST' and request.is_ajax():
+    if request.method == 'POST':
         data = json.loads(request.body)
 
         if 'sightings' in data and data['sightings']:
