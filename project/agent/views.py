@@ -1,3 +1,5 @@
+import json
+
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from agent.models import Sighting
@@ -5,18 +7,26 @@ from agent.models import Sighting
 
 @csrf_exempt
 def report(request):
-    if (request.method == 'POST'
-      and request.POST.get('host') is not None
-      and request.POST.get('device_id') is not None
-      and request.POST.get('timestamp') is not None
-      and request.POST.get('signal_dbm') is not None):
+    if request.method == 'POST':
+        data = json.loads(request.body)
 
-        # create a new sighting from the request
-        Sighting.objects.create(
-            host=request.POST.get('host'),
-            device_id=request.POST.get('device_id'),
-            timestamp=request.POST.get('timestamp'),
-            signal_dbm=request.POST.get('signal_dbm'))
-        return HttpResponse()
-    else:
-        return HttpResponseBadRequest()
+        if 'sightings' in data and data['sightings']:
+            sightings = []
+
+            for s in data['sightings']:
+                if (s.get('host') is not None
+                and s.get('device_id') is not None
+                and s.get('timestamp') is not None
+                and s.get('signal_dbm') is not None):
+                    sightings.append(Sighting(
+                        host=s.get('host'),
+                        device_id=s.get('device_id'),
+                        timestamp=s.get('timestamp'),
+                        signal_dbm=s.get('signal_dbm')))
+
+            # create new sightings from the request
+            if sightings:
+                Sighting.objects.bulk_create(sightings)
+                return HttpResponse()
+
+    return HttpResponseBadRequest()
