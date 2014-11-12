@@ -12,10 +12,11 @@ import requests
 import sqlite3
 
 
-def main_loop(server_endpoint, host_identifier, wlan_interface, log_db, max_lines_per_request, endpoint_auth):
+def main_loop(server_endpoint, host_identifier, wlan_interface, log_db, max_lines_per_request, wait_seconds_between_requests, endpoint_auth):
     try:
         # start process loop
         while (True):
+            time.sleep(int(wait_seconds_between_requests))
             sightings = []
             ids = []
 
@@ -59,7 +60,6 @@ def main_loop(server_endpoint, host_identifier, wlan_interface, log_db, max_line
                             # wait a second so we aren't hammering the log file
                             time.sleep(1)
 
-                time.sleep(15)
             except TypeError:
                 # wait a second so we aren't hammering the log file
                 time.sleep(1)
@@ -94,8 +94,8 @@ def report(sightings, server_endpoint, host_identifier, endpoint_auth):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 6:
-        print('Five arguments are required (and a sixth is optional) for this script: server_endpoint, host_identifier, wlan_interface, log_db, max_lines_per_request, and endpoint_auth; e.g. ./send.py http://192.168.1.1/agent/report/ "$(echo -n "$(cat /sys/class/net/wlan0/address)" | openssl sha1 -hmac "key" | sed \'s/^.* //\')" wlan0 /tmp/tshark.db 1000 endpoint_username:endpoint_password', file=sys.stderr)
+    if len(sys.argv) < 7:
+        print('Six arguments are required (and a seventh is optional) for this script: server_endpoint, host_identifier, wlan_interface, log_db, max_lines_per_request, wait_seconds_between_requests, and endpoint_auth; e.g. ./send.py http://192.168.1.1/agent/report/ "$(echo -n "$(cat /sys/class/net/wlan0/address)" | openssl sha1 -hmac "key" | sed \'s/^.* //\')" wlan0 /tmp/tshark.db 900 15 endpoint_username:endpoint_password', file=sys.stderr)
         sys.exit(1)
 
     # start main loop
@@ -106,4 +106,5 @@ if __name__ == '__main__':
             wlan_interface=sys.argv[3],
             log_db=sys.argv[4],
             max_lines_per_request=sys.argv[5],
-            endpoint_auth=(len(sys.argv) > 6 and tuple(sys.argv[6].split(':')) or None))
+            wait_seconds_between_requests=sys.argv[6],
+            endpoint_auth=(len(sys.argv) > 7 and tuple(sys.argv[7].split(':')) or None))

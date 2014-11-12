@@ -69,5 +69,5 @@ Usage
 14. Copy the scripts/send.py and scripts/send_if_notrunning.sh files to the client device (e.g. Raspberry Pi), and set something like this to run regularly (e.g. every 5 minutes) via a cron job:
 
     ```
-    /path/to/send_if_notrunning.sh "/path/to/send.py http://endpoint.server.url/agent/report/ "$(echo -n "$(cat /sys/class/net/wlan0/address)" | openssl sha1 -hmac "key" | sed 's/^.* //')" wlan0 /path/to/tshark.db 1000 endpoint_username:endpoint_password"
+    /path/to/send_if_notrunning.sh "/path/to/send.py http://endpoint.server.url/agent/report/ "$(echo -n "$(cat /sys/class/net/wlan0/address)" | openssl sha1 -hmac "key" | sed 's/^.* //')" wlan0 /path/to/tshark.db 900 15 endpoint_username:endpoint_password"
     ```
