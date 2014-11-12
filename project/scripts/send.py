@@ -31,7 +31,6 @@ def main_loop(server_endpoint, host_identifier, wlan_interface, log_db, max_line
                         results = c.fetchall()
                         conn.close()
                         is_query_successful = True
-                        print('Retrieved %d results from sqlite' % len(results))
                     except sqlite3.OperationalError:
                         # wait a second so we aren't hammering the log file
                         time.sleep(1)
@@ -56,7 +55,6 @@ def main_loop(server_endpoint, host_identifier, wlan_interface, log_db, max_line
                             conn.commit()
                             conn.close()
                             is_query_successful = True
-                            print('Deleted %d ids from sqlite' % len(ids))
                         except sqlite3.OperationalError:
                             # wait a second so we aren't hammering the log file
                             time.sleep(1)
@@ -89,7 +87,6 @@ def report(sightings, server_endpoint, host_identifier, endpoint_auth):
             try:
                 req = requests.post(server_endpoint, data=json.dumps({'sightings': data}), headers={'Connection':'close', 'content-type': 'application/json'}, auth=endpoint_auth, verify=False)
                 if req and req.status_code == 200:
-                    print('Request with data %s successful' % data)
                     is_req_successful = True
             except:
                 print('Request to server endpoint %s with data %s%s failed' % (server_endpoint, data, endpoint_auth and (' and auth %s' % endpoint_auth) or ''), file=sys.stderr)
