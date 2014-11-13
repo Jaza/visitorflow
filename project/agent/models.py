@@ -8,6 +8,11 @@ class Sighting(models.Model):
     timestamp = models.IntegerField(db_index=True)
     normalize_processed = models.BooleanField(default=False)
 
+    class Meta:
+        index_together = (
+            ['normalize_processed', 'host', 'device_id', 'timestamp']
+        )
+
 
 class NormalizedSighting(models.Model):
 	host = models.CharField(max_length=32)
