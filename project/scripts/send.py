@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import json
 import logging
+import logging.handlers
 import sys
 import os
 import subprocess
@@ -17,7 +18,7 @@ def main_loop(server_endpoint, host_identifier, wlan_interface, log_db, info_log
     # Set up logging for this script.
     logger = logging.getLogger('send')
     logger.setLevel(logging.DEBUG)
-    fh = logging.FileHandler(info_log_file)
+    fh = logging.handlers.RotatingFileHandler(info_log_file, 'a', 100000, 5)
     fh.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(levelname)s %(asctime)s %(message)s', '[%Y-%m-%d %H:%M:%S]')
     fh.setFormatter(formatter)
