@@ -1,17 +1,21 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import LabelCommand
 from agent.models import Sighting, NormalizedSighting
 from time import time
 from math import floor
 
-class Command(BaseCommand):
-    args = ''
+class Command(LabelCommand):
+    args = '<limit>'
+    label = 'limit'
     help = 'Normalize and consolidate raw sighting data.'
 
-    def handle(self, *args, **options):
+    def handle(self, label, **options):
+        limit = int(label)
+        i = 0
+
         # start from the oldest unprocessed record
         ts = int(floor(time())) - 15
         sightings = Sighting.objects.filter(normalize_processed=False, timestamp__lte=ts).order_by('timestamp')[:1]
-        while (sightings):
+        while (i < limit and sightings):
             group = []
             try:
                 # use the first record as the start of our set group
@@ -51,3 +55,4 @@ class Command(BaseCommand):
                 sighting.normalize_processed = True
                 sighting.save()
             sightings = Sighting.objects.filter(normalize_processed=False, timestamp__lte=ts).order_by('timestamp')[:1]
+            i += 1
